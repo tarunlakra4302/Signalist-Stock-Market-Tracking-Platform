@@ -1,42 +1,27 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner"
-import "./globals.css";
+import { Metadata } from 'next';
+import { Inter, JetBrains_Mono } from 'next/font/google';
+import './globals.css';
+import '@/src/web/styles/index.css'; // New Inertia Design System
+import { Toaster } from 'sonner';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' });
 
 export const metadata: Metadata = {
-  title: "Signalist",
-  description: "Track real-time stock prices, get personalized alerts and explore detailed company insights.",
-  icons: {
-    icon: [
-      { url: '/icon.svg', type: 'image/svg+xml' },
-      { url: '/favicon.ico', sizes: 'any' }
-    ],
-    apple: { url: '/icon.svg', type: 'image/svg+xml' },
-  },
+  title: 'Inertia | Institutional Risk Engine',
+  description: 'High-performance equity risk and correlation surveillance.',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="en" className="dark" style={{ colorScheme: 'dark' }}>
+      <body className={`${inter.variable} ${mono.variable} font-sans antialiased`}>
         {children}
-        <Toaster />
+        <Toaster closeButton position="top-right" theme="dark" />
       </body>
     </html>
   );

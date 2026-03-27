@@ -1,28 +1,52 @@
 'use client';
 
-import React, { memo } from 'react';
-import useTradingViewWidget from "@/hooks/useTradingViewWidget";
-import {cn} from "@/lib/utils";
+import React, { useEffect, useRef, memo } from 'react';
 
 interface TradingViewWidgetProps {
-    title?: string;
-    scriptUrl: string;
-    config: Record<string, unknown>;
-    height?: number;
-    className?: string;
+  scriptUrl: string;
+  config: any;
+  className?: string;
+  height?: number | string;
 }
 
-const TradingViewWidget = ({ title, scriptUrl, config, height = 600, className }: TradingViewWidgetProps) => {
-    const containerRef = useTradingViewWidget(scriptUrl, config, height);
+const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({
+  scriptUrl,
+  config,
+  className = '',
+  height = 400,
+}) => {
+  const container = useRef<HTMLDivElement>(null);
 
-    return (
-        <div className="w-full">
-            {title && <h3 className="font-semibold text-2xl text-gray-100 mb-5">{title}</h3>}
-            <div className={cn('tradingview-widget-container', className)} ref={containerRef}>
-                <div className="tradingview-widget-container__widget" style={{ height, width: "100%" }} />
-            </div>
-        </div>
-    );
-}
+  useEffect(() => {
+    if (!container.current) return;
+
+    // Clear previous children
+    container.current.innerHTML = '';
+
+    const script = document.createElement('script');
+    script.src = scriptUrl;
+    script.type = 'text/javascript';
+    script.async = true;
+    script.innerHTML = JSON.stringify(config);
+
+    container.current.appendChild(script);
+
+    return () => {
+      if (container.current) {
+        container.current.innerHTML = '';
+      }
+    };
+  }, [scriptUrl, config]);
+
+  return (
+    <div
+      className={`tradingview-widget-container ${className}`}
+      ref={container}
+      style={{ height, width: '100%' }}
+    >
+      <div className="tradingview-widget-container__widget"></div>
+    </div>
+  );
+};
 
 export default memo(TradingViewWidget);

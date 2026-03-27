@@ -1,14 +1,15 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useMemo } from 'react';
 import Link from 'next/link';
-import { Trash2, Bell } from 'lucide-react';
+import { Trash2, Bell, Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AlertModal from '@/components/AlertModal';
 import { removeFromWatchlist } from '@/lib/actions/watchlist.actions';
 import { deleteAlert } from '@/lib/actions/alert.actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useLivePrice } from '@/hooks/useLivePrice';
 
 interface WatchlistItem {
   symbol: string;
@@ -31,6 +32,54 @@ interface WatchlistTableProps {
   alerts: AlertItem[];
 }
 
+/**
+ * Price cell component with flash animation on price changes.
+ */
+function LivePriceCell({
+  symbol,
+  prices,
+}: {
+  symbol: string;
+  prices: Map<string, { price: number; previousPrice: number | null; isLive: boolean; lastUpdated: Date }>;
+}) {
+  const priceData = prices.get(symbol);
+
+  if (!priceData) {
+    return <span className="text-gray-500 text-sm">—</span>;
+  }
+
+  const { price, previousPrice } = priceData;
+  const direction =
+    previousPrice !== null
+      ? price > previousPrice
+        ? 'up'
+        : price < previousPrice
+          ? 'down'
+          : null
+      : null;
+
+  const flashClass = direction === 'up'
+    ? 'price-flash-up'
+    : direction === 'down'
+      ? 'price-flash-down'
+      : '';
+
+  return (
+    <span
+      key={`${symbol}-${price}-${Date.now()}`}
+      className={`font-mono text-sm font-medium ${flashClass} ${
+        direction === 'up'
+          ? 'text-emerald-400'
+          : direction === 'down'
+            ? 'text-red-400'
+            : 'text-gray-200'
+      }`}
+    >
+      ${price.toFixed(2)}
+    </span>
+  );
+}
+
 export default function WatchlistTable({ watchlist: initialWatchlist, alerts: initialAlerts }: WatchlistTableProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -38,6 +87,10 @@ export default function WatchlistTable({ watchlist: initialWatchlist, alerts: in
   const [alerts, setAlerts] = useState(initialAlerts);
   const [alertModalOpen, setAlertModalOpen] = useState(false);
   const [selectedStock, setSelectedStock] = useState<{ symbol: string; company: string } | null>(null);
+
+  // Extract symbols for live price streaming
+  const symbols = useMemo(() => watchlist.map((item) => item.symbol), [watchlist]);
+  const { prices, isConnected } = useLivePrice(symbols);
 
   const handleRemoveStock = async (symbol: string) => {
     startTransition(async () => {
@@ -80,12 +133,21 @@ export default function WatchlistTable({ watchlist: initialWatchlist, alerts: in
 
   return (
     <>
+      {/* Live indicator */}
+      {isConnected && (
+        <div className="flex items-center gap-2 mb-4 px-4">
+          <Radio className="h-3 w-3 text-emerald-400 animate-pulse" />
+          <span className="text-xs text-emerald-400 font-medium">LIVE</span>
+        </div>
+      )}
+
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b border-gray-800">
               <th className="text-left p-4 text-gray-400 font-medium">Company</th>
               <th className="text-left p-4 text-gray-400 font-medium">Symbol</th>
+              <th className="text-left p-4 text-gray-400 font-medium">Price</th>
               <th className="text-left p-4 text-gray-400 font-medium">Added</th>
               <th className="text-left p-4 text-gray-400 font-medium">Alerts</th>
               <th className="text-left p-4 text-gray-400 font-medium">Actions</th>
@@ -114,6 +176,9 @@ export default function WatchlistTable({ watchlist: initialWatchlist, alerts: in
                     >
                       {item.symbol}
                     </Link>
+                  </td>
+                  <td className="p-4">
+                    <LivePriceCell symbol={item.symbol} prices={prices} />
                   </td>
                   <td className="p-4 text-gray-400">
                     {new Date(item.addedAt).toLocaleDateString()}

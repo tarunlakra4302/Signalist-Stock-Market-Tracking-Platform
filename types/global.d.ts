@@ -211,6 +211,47 @@ declare global {
         alertType: 'upper' | 'lower';
         threshold: number;
         changePercent?: number;
+        isActive?: boolean;
+        triggeredAt?: Date | string | null;
+        lastNotifiedAt?: Date | string | null;
+        createdAt?: Date | string;
+    };
+
+    type UserForNewsEmail = {
+        id: string;
+        email: string;
+        name: string;
+    };
+
+    type NotificationData = {
+        id: string;
+        type: 'alert_triggered' | 'system';
+        title: string;
+        message: string;
+        metadata: {
+            alertId?: string;
+            symbol?: string;
+            currentPrice?: number;
+            threshold?: number;
+            condition?: 'upper' | 'lower';
+        };
+        read: boolean;
+        createdAt: Date | string;
+    };
+
+    type EvaluationResult = {
+        evaluated: number;
+        triggered: number;
+        errors: number;
+        symbols: number;
+        durationMs: number;
+    };
+
+    type LivePriceData = {
+        price: number;
+        previousPrice: number | null;
+        isLive: boolean;
+        lastUpdated: Date;
     };
 }
 

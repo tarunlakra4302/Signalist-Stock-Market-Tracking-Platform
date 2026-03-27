@@ -1,21 +1,21 @@
 export const NAV_ITEMS = [
-    { href: '/', label: 'Dashboard' },
-    { href: '/search', label: 'Search' },
-    { href: '/watchlist', label: 'Watchlist' },
+    { href: '/', label: 'Overview' },
+    { href: '/search', label: 'Scanner' },
+    { href: '/watchlist', label: 'Surveillance' },
 ];
 
 // Sign-up form select options
 export const INVESTMENT_GOALS = [
-    { value: 'Growth', label: 'Growth' },
-    { value: 'Income', label: 'Income' },
-    { value: 'Balanced', label: 'Balanced' },
-    { value: 'Conservative', label: 'Conservative' },
+    { value: 'Growth', label: 'Capital Expansion' },
+    { value: 'Income', label: 'Yield Generation' },
+    { value: 'Balanced', label: 'Risk-Adjusted' },
+    { value: 'Conservative', label: 'Capital Preservation' },
 ];
 
 export const RISK_TOLERANCE_OPTIONS = [
-    { value: 'Low', label: 'Low' },
-    { value: 'Medium', label: 'Medium' },
-    { value: 'High', label: 'High' },
+    { value: 'Low', label: 'Averse' },
+    { value: 'Medium', label: 'Moderate' },
+    { value: 'High', label: 'Aggressive' },
 ];
 
 export const PREFERRED_INDUSTRIES = [
@@ -325,15 +325,15 @@ export const POPULAR_STOCK_SYMBOLS = [
 ];
 
 export const NO_MARKET_NEWS =
-    '<p class="mobile-text" style="margin:0 0 20px 0;font-size:16px;line-height:1.6;color:#4b5563;">No market news available today. Please check back tomorrow.</p>';
+    '<p class="mobile-text" style="margin:0 0 20px 0;font-size:16px;line-height:1.6;color:#94a3b8;">Neural sensors report clear skies. No significant market anomalies detected in current cycle.</p>';
 
 export const WATCHLIST_TABLE_HEADER = [
-    'Company',
-    'Symbol',
-    'Price',
-    'Change',
-    'Market Cap',
+    'Entity',
+    'Ticker',
+    'Last Price',
+    'Delta',
+    'Cap (Est.)',
     'P/E Ratio',
-    'Alert',
-    'Action',
+    'Trigger',
+    'Operation',
 ];

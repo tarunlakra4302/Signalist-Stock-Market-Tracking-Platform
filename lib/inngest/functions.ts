@@ -118,3 +118,24 @@ export const sendDailyNewsSummary = inngest.createFunction(
         return { success: true, message: 'Daily news summary emails sent successfully' }
     }
 )
+
+/**
+ * Alert Evaluator Cron Job.
+ * Runs on a configurable schedule (default: every 5 minutes).
+ * Batch-evaluates all active price alerts against current market prices.
+ */
+export const alertEvaluator = inngest.createFunction(
+    { id: 'alert-evaluator' },
+    { cron: process.env.ALERT_EVAL_CRON || '*/5 * * * *' },
+    async ({ step }) => {
+        const result = await step.run('evaluate-alerts', async () => {
+            const { evaluateAlerts } = await import('@/app/services/alertEngine');
+            return await evaluateAlerts();
+        });
+
+        return {
+            success: true,
+            ...result,
+        };
+    }
+)

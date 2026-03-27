@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #09090b; /* Deep Obsidian */
+  --color-foreground: #fafafa;
+  
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  
+  --color-accent: #f43f5e; /* Cyber Crimson for alerts */
+  --color-success: #10b981;
+  
+  --color-card: #121214;
+  --color-border: #27272a;
+  
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --radius-lg: 0.5rem;
+  --radius-md: 0.375rem;
+  --radius-sm: 0.25rem;
+}
+
+/* Custom Utilities for High-Density UI */
+@layer utilities {
+  .glass-panel {
+    @apply bg-card/50 backdrop-blur-md border border-border/50;
+  }
+  
+  .data-grid {
+    @apply grid gap-px bg-border/20;
+  }
+  
+  .data-cell {
+    @apply bg-background p-4 flex flex-col gap-1;
+  }
+}
+
+/* Base Refinements */
+body {
+  @apply bg-background text-foreground antialiased selection:bg-primary/30;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
